@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Carrossel 3D</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="carousel-container">
+    <div class="carousel" id="carousel"></div>
+    <div class="indicators" id="indicators"></div>
+  </div>
+  
+  <div class="social-links">
+    <a href="https://github.com/samuelcotinguiba" target="_blank" rel="noopener noreferrer" class="social-link" aria-label="GitHub">
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+      </svg>
+    </a>
+    <a href="https://www.linkedin.com/in/samuel-cotinguiba-959491352/" target="_blank" rel="noopener noreferrer" class="social-link" aria-label="LinkedIn">
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/>
+      </svg>
+    </a>
+  </div>
+
+    <script>
+    const items = [
+      { 
+        img: 'img/sobre.jpg', 
+        title: 'Sobre Mim', 
+        desc: 'Desenvolvedor Full Stack . Especializado em JavaScript, Python, C++ e API Web.'
+      },
+      { 
+        img: 'img/Home.jpg', 
+        title: 'Tecnologias', 
+        desc: 'JavaScript • Python • C++ • HTML/CSS • Git • APIs • SQL • Redes'
+      },
+      { 
+        img: 'img/softskills.jpeg', 
+        title: 'Soft Skills', 
+        desc: 'Criatividade • Resolução de Problemas • Aprendizado Rápido • Trabalho em Equipe • Comunicação Técnica • White Belt Six Sigma'
+      },
+      { 
+        img: 'img/formacao.jpg.avif', 
+        title: 'Formação', 
+        desc: 'Desenvolvedor em formação • Projetos práticos • Autodidata • Engenharia da computação: Em Andamento'
+      },
+      { 
+        img: 'img/destaque.webp', 
+        title: 'Destaque', 
+        desc: ' Projetos de Algoritmos: python, c++ • Projetos full-stack'
+      },
+      { 
+        img: 'img/github.jpeg', 
+        title: 'GitHub', 
+        desc: '8+ repositórios • Projetos criativos e inovadores • Código limpo e documentado'
+      }
+    ];
+
+    let currentIndex = 0;
+    const carousel = document.getElementById('carousel');
+    const indicatorsContainer = document.getElementById('indicators');
+
+    function createCarousel() {
+      carousel.innerHTML = '';
+      indicatorsContainer.innerHTML = '';
+
+      items.forEach((item, index) => {
+        const div = document.createElement('div');
+        div.className = 'carousel-item';
+        div.innerHTML = `
+          <div class="carousel-item-image">
+            <img src="${item.img}" alt="${item.title}">
+          </div>
+          <div class="carousel-item-content">
+            <h3>${item.title}</h3>
+            <p>${item.desc}</p>
+            <p>SAMUEL COTINGUIBA</p>
+          </div>
+        `;
+        div.addEventListener('click', () => goToSlide(index));
+        div.style.cursor = 'pointer';
+        carousel.appendChild(div);
+
+        const indicator = document.createElement('div');
+        indicator.className = 'indicator';
+        indicator.addEventListener('click', () => goToSlide(index));
+        indicatorsContainer.appendChild(indicator);
+      });
+
+      updateCarousel();
+    }
+
+    function updateCarousel() {
+      const carouselItems = document.querySelectorAll('.carousel-item');
+      const indicators = document.querySelectorAll('.indicator');
+      const angleStep = 360 / items.length;
+      
+      // Responsive distance calculation optimized for mobile devices
+      const screenWidth = window.innerWidth;
+      let distance;
+      if (screenWidth < 375) {
+        distance = 240; // iPhone SE, small Android
+      } else if (screenWidth < 480) {
+        distance = 270; // iPhone 12/13/14, standard Android
+      } else if (screenWidth < 768) {
+        distance = 350; // large phones, small tablets
+      } else if (screenWidth < 1024) {
+        distance = 420; // tablets
+      } else {
+        distance = 350; // desktop
+      }
+
+      carouselItems.forEach((item, index) => {
+        const offset = index - currentIndex;
+        let normalized = offset;
+        if (offset > items.length / 2) normalized = offset - items.length;
+        if (offset < -items.length / 2) normalized = offset + items.length;
+
+        const angle = normalized * angleStep;
+        const absNormalized = Math.abs(normalized);
+        
+        // Progressive scale and opacity based on distance from center
+        let scale, opacity;
+        if (index === currentIndex) {
+          scale = 1;
+          opacity = 1;
+        } else if (absNormalized === 1) {
+          scale = 0.85;
+          opacity = 0.7;
+        } else {
+          scale = 0.75;
+          opacity = 0.5;
+        }
+
+        item.style.transform = `
+          translate(-50%, -50%)
+          rotateY(${angle}deg)
+          translateZ(${distance}px)
+          scale(${scale})
+        `;
+        item.style.opacity = opacity;
+        item.style.zIndex = index === currentIndex ? '10' : Math.max(1, 5 - absNormalized);
+      });
+
+      indicators.forEach((indicator, index) => {
+        indicator.classList.toggle('active', index === currentIndex);
+      });
+    }
+
+    function goToSlide(index) {
+      currentIndex = ((index % items.length) + items.length) % items.length;
+      updateCarousel();
+    }
+    function nextSlide() {
+      currentIndex = (currentIndex + 1) % items.length;
+      updateCarousel();
+    }
+    function prevSlide() {
+      currentIndex = (currentIndex - 1 + items.length) % items.length;
+      updateCarousel();
+    }
+
+    // Keyboard navigation (kept for accessibility)
+    document.addEventListener('keydown', e => {
+      if (e.key === 'ArrowLeft') prevSlide();
+      if (e.key === 'ArrowRight') nextSlide();
+    });
+
+    window.addEventListener('resize', updateCarousel);
+
+    createCarousel();
+    
+    // Drag / swipe support (pointer events)
+    (function addDragSupport(){
+      const container = document.querySelector('.carousel-container');
+      let isPointerDown = false;
+      let startX = 0;
+      let currentX = 0;
+      let deltaX = 0;
+      const threshold = 60; // px to trigger slide change
+      let wasMoving = false;
+
+      function onPointerDown(e){
+        isPointerDown = true;
+        startX = e.clientX || (e.touches && e.touches[0].clientX) || 0;
+        currentX = startX;
+        deltaX = 0;
+        wasMoving = false;
+      }
+
+      function onPointerMove(e){
+        if(!isPointerDown) return;
+        const clientX = e.clientX || (e.touches && e.touches[0].clientX) || currentX;
+        deltaX = clientX - startX;
+        // Track movement without visual feedback
+        wasMoving = true;
+      }
+
+      function onPointerUp(e){
+        if(!isPointerDown) return;
+        isPointerDown = false;
+        if(Math.abs(deltaX) > threshold){
+          if(deltaX < 0) nextSlide(); else prevSlide();
+        }
+      }
+
+      // Pointer events for desktop and touch
+      container.addEventListener('pointerdown', onPointerDown, {passive:true});
+      window.addEventListener('pointermove', onPointerMove, {passive:true});
+      window.addEventListener('pointerup', onPointerUp, {passive:true});
+
+      // Touch fallback (some mobile browsers)
+      container.addEventListener('touchstart', onPointerDown, {passive:true});
+      window.addEventListener('touchmove', onPointerMove, {passive:true});
+      window.addEventListener('touchend', onPointerUp, {passive:true});
+    })();
+  </script>
+</body>
+</html>
