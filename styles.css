@@ -60,7 +60,7 @@ body {
   position: relative;
   width: min(260px, 82vw);
   height: min(380px, 52vh);
-  margin: 0 auto 60px;
+  margin: 0 auto 80px;
   transform-style: preserve-3d;
   transition: transform 0.7s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
